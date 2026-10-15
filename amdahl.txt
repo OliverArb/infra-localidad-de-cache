@@ -1,0 +1,4 @@
+hilos 1 secuencial 463.8 ms paralelo 2104.5 ms total 2568.3 ms suma 4999872888854
+hilos 2 secuencial 478.2 ms paralelo 1022.0 ms total 1500.2 ms suma 4999872888854
+hilos 4 secuencial 468.8 ms paralelo 525.2 ms total 994.0 ms suma 4999872888854
+hilos 8 secuencial 477.8 ms paralelo 343.7 ms total 821.5 ms suma 4999872888854

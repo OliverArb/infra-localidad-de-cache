@@ -23,12 +23,28 @@ const int LINEA = 64;  // bytes de una línea de caché
 // vuelta vaya a memoria, incrementar a través de un puntero volatile:
 //   volatile long *c = &contadores[id];  *c = *c + 1;
 void pegados(vector<long> &contadores) {
+       vector<thread> hs;
+       for (int id = 0; id < HILOS; id++)
+            hs.emplace_back([&contadores, id](){
+              volatile long *c = &contadores[id];
+              for (long i = 0; i < VUELTAS; i++) *c = *c + 1;
+            });
+       for (auto &h : hs) h.join();
+       
 }
 
 // TODO: la misma cuenta, pero con los contadores separados lo suficiente para
 // que cada uno caiga en su propia línea de caché. Sugerencia: reservar
 // HILOS * (LINEA / sizeof(long)) posiciones y usar solo una de cada grupo.
 void separados(vector<long> &contadores) {
+       const int salto = LINEA / sizeof(long);
+       vector<thread> hs;
+       for (int id = 0; id< HILOS; id ++)
+            hs.emplace_back([&contadores, id, salto](){
+              volatile long *c = &contadores[id * salto];
+              for (long i = 0; i < VUELTAS; i++) *c = *c + 1;
+            });
+       for (auto &h : hs) h.join();
 }
 
 int main() {

@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <thread>
 #include <vector>
+#include <functional>
 
 using namespace std;
 using namespace std::chrono;
@@ -35,12 +36,26 @@ long procesar(long x) {
 // el parcial en `salida`. Acumular en una variable local y escribir `salida`
 // una sola vez.
 void trozo(const vector<long> &v, size_t ini, size_t fin, long &salida) {
+  long acc = 0;
+  for (size_t i = ini; i < fin; i++) acc += procesar (v[i]);
+  salida = acc;
 }
 
 // TODO: repartir [0, n) en k trozos, lanzar un hilo por trozo con `trozo`,
 // unirlos y devolver la suma de los parciales.
 long en_paralelo(const vector<long> &v, int k) {
-  return 0;
+  vector<long> parciales(k, 0);
+  vector<thread> hs;
+  size_t n = v.size();
+  for (int t = 0; t < k; t++) {
+    size_t ini = t * n / k;
+    size_t fin = (t + 1) * n / k;
+    hs.emplace_back(trozo, cref(v), ini, fin, ref(parciales[t]));
+  }
+  for (auto &h : hs) h.join();
+  long total = 0;
+  for (long p : parciales) total += p;
+  return total;
 }
 
 int main() {
